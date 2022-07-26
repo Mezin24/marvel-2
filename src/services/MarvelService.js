@@ -24,6 +24,7 @@ class MarvelService {
     const res = await this.getResourse(
       `${this._baseUrl}characters/${id}?${this._apiKey}`
     );
+
     return await this._transformData(res.data.results[0]);
   }
 
@@ -37,6 +38,7 @@ class MarvelService {
       homepage: char.urls[0].url,
       wiki: char.urls[1].url,
       id: char.id,
+      comics: char.comics.items,
     };
   };
 }
