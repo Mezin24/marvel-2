@@ -10,6 +10,9 @@ class CharList extends Component {
     chars: [],
     loading: true,
     error: false,
+    offset: 210,
+    newItemsLoading: false,
+    charEnded: false,
   };
 
   componentDidMount() {
@@ -18,19 +21,33 @@ class CharList extends Component {
 
   marvelService = new MarvelService();
 
-  onCharLoaded = (chars) => {
-    this.setState({ chars, loading: false });
+  onCharLoaded = (newChars) => {
+    let ended = newChars.length < 9 ? true : false;
+
+    this.setState(({ chars, offset }) => ({
+      chars: [...chars, ...newChars],
+      loading: false,
+      newItemsLoading: false,
+      offset: offset + 9,
+      charEnded: ended,
+    }));
   };
 
-  updateChars = () => {
+  onCharLoading = () => {
+    this.setState({ newItemsLoading: true });
+  };
+
+  updateChars = (offset) => {
+    this.onCharLoading();
+
     this.marvelService
-      .getAllCharacters()
+      .getAllCharacters(offset)
       .then(this.onCharLoaded)
       .catch(this.onError);
   };
 
   onError = () => {
-    this.setState({ loading: false, error: true });
+    this.setState({ loading: false, error: true, newItemsLoading: false });
   };
 
   renderItems = (chars) => {
@@ -62,7 +79,8 @@ class CharList extends Component {
   };
 
   render() {
-    const { loading, error, chars } = this.state;
+    const { loading, error, chars, offset, newItemsLoading, charEnded } =
+      this.state;
 
     const spinner = loading ? <Spinner /> : null;
     const errorMessage = error ? <ErrorMessage /> : null;
@@ -73,8 +91,15 @@ class CharList extends Component {
         {content}
         {spinner}
         {errorMessage}
-        <button className='button button__main button__long'>
-          <div className='inner'>load more</div>
+        <button
+          className='button button__main button__long'
+          onClick={() => this.updateChars(offset)}
+          disabled={newItemsLoading}
+          style={{ display: charEnded ? 'none' : 'block' }}
+        >
+          <div className='inner'>
+            {newItemsLoading ? 'Loading...' : 'load more'}
+          </div>
         </button>
       </div>
     );
