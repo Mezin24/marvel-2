@@ -22,7 +22,7 @@ export const useHttp = () => {
           );
         }
 
-        const data = response.json();
+        const data = await response.json();
         setLoading(false);
 
         return data;

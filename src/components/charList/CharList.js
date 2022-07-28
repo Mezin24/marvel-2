@@ -1,47 +1,38 @@
 import { useState, useEffect, useRef } from 'react';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import './charList.scss';
 
 const CharList = ({ onSelectChar }) => {
   const [chars, setChars] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [offset, setOffset] = useState(210);
   const [newItemsLoading, setNewItemsLoading] = useState(false);
   const [charEnded, setCharEnded] = useState(false);
+
+  const { loading, error, getAllCharacters } = useMarvelService();
 
   useEffect(() => {
     updateChars();
     // eslint-disable-next-line
   }, []);
 
-  const marvelService = new MarvelService();
-
   const onCharLoaded = (newChars) => {
     let ended = newChars.length < 9 ? true : false;
     setChars((chars) => [...chars, ...newChars]);
-    setLoading(false);
+    setNewItemsLoading(true);
     setNewItemsLoading(false);
     setOffset((prevOffset) => prevOffset + 9);
     setCharEnded(ended);
   };
 
-  const onCharLoading = () => {
-    setNewItemsLoading(true);
-  };
-
-  const updateChars = (offset) => {
-    onCharLoading();
-
-    marvelService.getAllCharacters(offset).then(onCharLoaded).catch(onError);
+  const updateChars = (offset, isNewItemsLoading) => {
+    isNewItemsLoading ? setNewItemsLoading(true) : setNewItemsLoading(false);
+    getAllCharacters(offset).then(onCharLoaded).catch(onError);
   };
 
   const onError = () => {
-    setLoading(false);
-    setError(true);
     setNewItemsLoading(false);
   };
 
@@ -93,18 +84,17 @@ const CharList = ({ onSelectChar }) => {
     return <ul className='char__grid'>{items}</ul>;
   };
 
-  const spinner = loading ? <Spinner /> : null;
+  const spinner = loading && !newItemsLoading ? <Spinner /> : null;
   const errorMessage = error ? <ErrorMessage /> : null;
-  const content = !(errorMessage || spinner) ? renderItems(chars) : null;
 
   return (
     <div className='char__list'>
-      {content}
+      {renderItems(chars)}
       {spinner}
       {errorMessage}
       <button
         className='button button__main button__long'
-        onClick={() => updateChars(offset)}
+        onClick={() => updateChars(offset, true)}
         disabled={newItemsLoading}
         style={{ display: charEnded ? 'none' : 'block' }}
       >

@@ -5,38 +5,29 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 const RandomChar = () => {
   const [char, setChar] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
-  const marvelService = new MarvelService();
+  const { loading, error, getChatacterById, clearError } = useMarvelService();
 
   useEffect(() => {
     updateChar();
     // eslint-disable-next-line
+    const timerId = setInterval(() => updateChar(), 30000);
+
+    return () => clearInterval(timerId);
   }, []);
 
   const onCharLoaded = (char) => {
     setChar(char);
-    setLoading(false);
-  };
-
-  const onLoading = () => {
-    setLoading(true);
   };
 
   const updateChar = () => {
-    onLoading();
+    clearError();
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    marvelService.getChatacterById(id).then(onCharLoaded).catch(onError);
-  };
-
-  const onError = () => {
-    setLoading(false);
-    setError(true);
+    getChatacterById(id).then(onCharLoaded);
   };
 
   const spinner = loading ? <Spinner /> : null;
