@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
@@ -45,8 +45,17 @@ const CharList = ({ onSelectChar }) => {
     setNewItemsLoading(false);
   };
 
+  const refs = useRef([]);
+  const focusOnItem = (i) => {
+    refs.current.forEach((item) =>
+      item.classList.remove('char__item_selected')
+    );
+    refs.current[i].classList.add('char__item_selected');
+    refs.current[i].focus();
+  };
+
   const renderItems = (chars) => {
-    const items = chars.map((char) => {
+    const items = chars.map((char, i) => {
       let imgStyles;
 
       if (
@@ -60,9 +69,19 @@ const CharList = ({ onSelectChar }) => {
 
       return (
         <li
+          tabIndex={0}
           key={char.id}
           className='char__item'
-          onClick={() => onSelectChar(char.id)}
+          onClick={() => {
+            onSelectChar(char.id);
+            focusOnItem(i);
+          }}
+          ref={(el) => (refs.current[i] = el)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              focusOnItem(i);
+            }
+          }}
         >
           <img src={char.thumbnail} alt='abyss' style={imgStyles} />
           <div className='char__name'>{char.name}</div>
