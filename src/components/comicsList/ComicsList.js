@@ -37,9 +37,9 @@ const ComicsList = () => {
   };
 
   const renderComics = (comics) => {
-    const items = comics.map((item) => {
+    const items = comics.map((item, i) => {
       return (
-        <li className='comics__item' key={item.id}>
+        <li className='comics__item' key={i}>
           <a href={item.url}>
             <img
               src={item.thumbnail}
@@ -66,16 +66,18 @@ const ComicsList = () => {
       {errorMessage}
       {comicsList}
 
-      <button
-        onClick={() => updateComicses(offset, true)}
-        disabled={newItemsLoading}
-        style={{ display: comicsEnded ? 'none' : 'block' }}
-        className='button button__main button__long'
-      >
-        <div className='inner'>
-          {!newItemsLoading ? 'load more' : 'Loading...'}
-        </div>
-      </button>
+      {!spinner && (
+        <button
+          onClick={() => updateComicses(offset, true)}
+          disabled={newItemsLoading}
+          style={{ display: comicsEnded ? 'none' : 'block' }}
+          className='button button__main button__long'
+        >
+          <div className='inner'>
+            {!newItemsLoading ? 'load more' : 'Loading...'}
+          </div>
+        </button>
+      )}
     </div>
   );
 };

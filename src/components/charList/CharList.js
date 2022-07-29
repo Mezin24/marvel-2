@@ -90,16 +90,18 @@ const CharList = ({ onSelectChar }) => {
       {renderItems(chars)}
       {spinner}
       {errorMessage}
-      <button
-        className='button button__main button__long'
-        onClick={() => updateChars(offset, true)}
-        disabled={newItemsLoading}
-        style={{ display: charEnded ? 'none' : 'block' }}
-      >
-        <div className='inner'>
-          {newItemsLoading ? 'Loading...' : 'load more'}
-        </div>
-      </button>
+      {!spinner && (
+        <button
+          className='button button__main button__long'
+          onClick={() => updateChars(offset, true)}
+          disabled={newItemsLoading}
+          style={{ display: charEnded ? 'none' : 'block' }}
+        >
+          <div className='inner'>
+            {newItemsLoading ? 'Loading...' : 'load more'}
+          </div>
+        </button>
+      )}
     </div>
   );
 };
