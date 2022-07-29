@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-=======
 import { useState, useEffect, useRef } from 'react';
->>>>>>> eb858fe74ba542068db7e84e04cf123d9f1c6b31
+import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
