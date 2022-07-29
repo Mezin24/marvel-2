@@ -12,7 +12,7 @@ const CharList = ({ onSelectChar }) => {
   const [newItemsLoading, setNewItemsLoading] = useState(false);
   const [charEnded, setCharEnded] = useState(false);
 
-  const { loading, error, getAllCharacters } = useMarvelService();
+  const { loading, error, getAllCharacters, clearError } = useMarvelService();
 
   useEffect(() => {
     updateChars();
@@ -21,21 +21,17 @@ const CharList = ({ onSelectChar }) => {
 
   const onCharLoaded = (newChars) => {
     let ended = newChars.length < 9 ? true : false;
-    setChars((chars) => [...chars, ...newChars]);
+    setChars([...chars, ...newChars]);
     setNewItemsLoading(true);
     setNewItemsLoading(false);
     setOffset((prevOffset) => prevOffset + 9);
     setCharEnded(ended);
   };
-  console.log('render');
 
   const updateChars = (offset, isNewItemsLoading) => {
+    clearError();
     isNewItemsLoading ? setNewItemsLoading(true) : setNewItemsLoading(false);
-    getAllCharacters(offset).then(onCharLoaded).catch(onError);
-  };
-
-  const onError = () => {
-    setNewItemsLoading(false);
+    getAllCharacters(offset).then(onCharLoaded);
   };
 
   const refs = useRef([]);
