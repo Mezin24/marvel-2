@@ -14,10 +14,10 @@ const RandomChar = () => {
 
   useEffect(() => {
     updateChar();
-    // eslint-disable-next-line
     const timerId = setInterval(() => updateChar(), 30000);
 
     return () => clearInterval(timerId);
+    // eslint-disable-next-line
   }, []);
 
   const onCharLoaded = (char) => {
